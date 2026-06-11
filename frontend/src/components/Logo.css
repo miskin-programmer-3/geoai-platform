@@ -1,0 +1,106 @@
+.geoai-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.geoai-logo-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(56, 189, 248, 0.42);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 66% 28%, rgba(34, 197, 94, 0.36), transparent 24%),
+    radial-gradient(circle at 32% 70%, rgba(56, 189, 248, 0.42), transparent 28%),
+    linear-gradient(135deg, #082f49, #0f172a);
+  color: #e0f2fe;
+  box-shadow:
+    0 12px 26px rgba(14, 165, 233, 0.22),
+    inset 0 0 20px rgba(56, 189, 248, 0.14);
+}
+
+.geoai-logo-mark::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: 50%;
+}
+
+.logo-grid-line {
+  position: absolute;
+  background: rgba(186, 230, 253, 0.2);
+}
+
+.logo-grid-line.horizontal {
+  width: 100%;
+  height: 1px;
+}
+
+.logo-grid-line.vertical {
+  width: 1px;
+  height: 100%;
+}
+
+.logo-pin {
+  position: relative;
+  z-index: 1;
+  color: #7dd3fc;
+  filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.5));
+}
+
+.logo-spark {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 2;
+  color: #bef264;
+}
+
+.geoai-logo-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  line-height: 1.05;
+}
+
+.geoai-logo-text strong {
+  color: var(--app-text);
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+.geoai-logo-text span {
+  color: var(--app-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.geoai-logo.compact .geoai-logo-mark {
+  width: 38px;
+  height: 38px;
+}
+
+.app-root.light .geoai-logo-mark {
+  border-color: #7dd3fc;
+  background:
+    radial-gradient(circle at 66% 28%, rgba(34, 197, 94, 0.28), transparent 24%),
+    radial-gradient(circle at 32% 70%, rgba(14, 165, 233, 0.32), transparent 28%),
+    linear-gradient(135deg, #e0f2fe, #ffffff);
+  color: #075985;
+}
+
+.app-root.light .logo-pin {
+  color: #0284c7;
+}
+
+.app-root.light .logo-spark {
+  color: #65a30d;
+}

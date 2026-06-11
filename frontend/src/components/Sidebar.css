@@ -1,0 +1,120 @@
+.app-sidebar {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  z-index: 20;
+  flex: 0 0 244px;
+  width: 244px;
+  box-sizing: border-box;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 14px;
+  border-right: 1px solid var(--app-border);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  scrollbar-width: thin;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  margin-bottom: 18px;
+  padding: 0 6px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--sidebar-muted);
+  text-decoration: none;
+  font-weight: 800;
+  line-height: 1.2;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sidebar-link:hover {
+  transform: translateX(2px);
+  border-color: var(--app-border);
+  background: var(--sidebar-hover);
+  color: var(--sidebar-text);
+}
+
+.sidebar-link.active {
+  border-color: var(--sidebar-active-border);
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+  box-shadow: 0 10px 24px rgba(14, 165, 233, 0.16);
+}
+
+.sidebar-link svg {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+  .app-sidebar {
+    top: 70px;
+    flex: 0 0 78px;
+    width: 78px;
+    padding: 14px 10px;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .sidebar-brand .geoai-logo-text,
+  .sidebar-link span {
+    display: none;
+  }
+
+  .sidebar-link {
+    justify-content: center;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-sidebar {
+    position: sticky;
+    top: 70px;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--app-border);
+  }
+
+  .sidebar-brand {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .sidebar-link {
+    flex: 0 0 46px;
+  }
+}

@@ -1,0 +1,190 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--app-border);
+  background: color-mix(in srgb, var(--app-surface) 92%, transparent);
+  color: var(--app-text);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.header-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--app-surface-2);
+  color: var(--app-text);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+  white-space: nowrap;
+}
+
+.header-stat svg {
+  color: #38bdf8;
+}
+
+.header-stat.online svg {
+  color: #22c55e;
+}
+
+.header-stat strong {
+  font-size: 16px;
+}
+
+.header-stat small {
+  color: var(--app-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  padding: 6px 10px 6px 6px;
+  background: var(--app-surface-2);
+  color: var(--app-text);
+  cursor: pointer;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  border-color: #38bdf8;
+  box-shadow: 0 14px 30px rgba(14, 165, 233, 0.18);
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: 72px;
+  height: 36px;
+  border-radius: 999px;
+  padding: 4px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+.theme-toggle-icon {
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  color: #facc15;
+}
+
+.theme-toggle-icon.moon {
+  color: #bfdbfe;
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f8fafc;
+  color: #f59e0b;
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.28);
+  transition:
+    transform 0.28s ease,
+    color 0.28s ease,
+    background 0.28s ease;
+}
+
+.theme-toggle-label {
+  min-width: 72px;
+  text-align: left;
+}
+
+.app-root.dark .theme-toggle-thumb {
+  transform: translateX(36px);
+  background: #0f172a;
+  color: #bfdbfe;
+}
+
+.app-root.light .theme-toggle-track {
+  background: linear-gradient(135deg, #bae6fd, #fde68a);
+}
+
+.app-root.light .theme-toggle {
+  background: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    padding: 0 12px;
+  }
+
+  .header-brand .geoai-logo-text strong {
+    font-size: 18px;
+  }
+
+  .header-brand .geoai-logo-text span {
+    display: none;
+  }
+
+  .theme-toggle {
+    padding-right: 6px;
+  }
+
+  .theme-toggle-label {
+    display: none;
+  }
+
+  .header-stat {
+    min-height: 34px;
+    padding: 6px 8px;
+  }
+
+  .header-stat small {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .header-stats {
+    display: none;
+  }
+}

@@ -1,0 +1,477 @@
+.app-root {
+  --app-bg: #020617;
+  --app-surface: #0f172a;
+  --app-surface-2: #1e293b;
+  --app-surface-3: #334155;
+  --app-border: #334155;
+  --app-text: #e2e8f0;
+  --app-muted: #94a3b8;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #ffffff;
+  --sidebar-muted: #dbeafe;
+  --sidebar-hover: #334155;
+  --sidebar-active-bg: #0c4a6e;
+  --sidebar-active-border: #38bdf8;
+  --sidebar-active-text: #ffffff;
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.app-root.light {
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-2: #f1f5f9;
+  --app-surface-3: #e2e8f0;
+  --app-border: #cbd5e1;
+  --app-text: #0f172a;
+  --app-muted: #475569;
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #0f172a;
+  --sidebar-muted: #334155;
+  --sidebar-hover: #f1f5f9;
+  --sidebar-active-bg: #e0f2fe;
+  --sidebar-active-border: #0284c7;
+  --sidebar-active-text: #075985;
+}
+
+.app-body {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: 244px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.app-footer {
+  margin-left: 244px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text);
+  text-align: center;
+  font-size: 14px;
+}
+
+.stat-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: var(--app-surface);
+  color: var(--app-text);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+}
+
+.stat-card-title {
+  margin: 0 0 10px;
+  color: var(--app-muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.stat-card-value {
+  margin: 0;
+  font-size: 28px;
+}
+
+.app-root.light .dashboard-card,
+.app-root.light .dashboard-panel,
+.app-root.light .stat-card,
+.app-root.light .weather-badge,
+.app-root.light .weather-panel,
+.app-root.light .weather-night-note,
+.app-root.light .chart-section,
+.app-root.light .weather-card,
+.app-root.light .forecast-card,
+.app-root.light .weather-hour-card,
+.app-root.light .seismic-card,
+.app-root.light .seismic-panel,
+.app-root.light .seismic-controls,
+.app-root.light .seismic-stat,
+.app-root.light .seismic-map-panel,
+.app-root.light .seismic-ai-panel,
+.app-root.light .quake-list-panel,
+.app-root.light .population-card,
+.app-root.light .population-panel,
+.app-root.light .source-pill,
+.app-root.light .building-map-panel,
+.app-root.light .building-form-panel,
+.app-root.light .building-list-panel,
+.app-root.light .risk-modal,
+.app-root.light .building-card,
+.app-root.light .building-panel,
+.app-root.light .risk-form,
+.app-root.light .risk-map-card,
+.app-root.light .map-summary-card,
+.app-root.light .map-control-panel,
+.app-root.light .map-panel {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+.app-root.light .weather-badge.live {
+  background:
+    radial-gradient(circle at 18% 30%, rgba(14, 165, 233, 0.22), transparent 34%),
+    linear-gradient(135deg, #e0f2fe, #f8fafc);
+}
+
+.app-root.light .weather-badge.live::after {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.app-root.light .weather-badge.live small {
+  color: #0369a1;
+}
+
+.app-root.light .weather-badge.live strong {
+  color: #0f172a;
+}
+
+.app-root.light .weather-badge-orbit {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.app-root.light .dashboard-card span,
+.app-root.light .dashboard-card small,
+.app-root.light .dashboard-panel small,
+.app-root.light .dashboard-heading p,
+.app-root.light .weather-summary,
+.app-root.light .advice-note,
+.app-root.light .sms-status,
+.app-root.light .population-heading p,
+.app-root.light .forecast-item span,
+.app-root.light .forecast-item small,
+.app-root.light .hour-card span,
+.app-root.light .hour-card small,
+.app-root.light .daily-card p,
+.app-root.light .daily-details,
+.app-root.light .sun-row,
+.app-root.light .weather-card span,
+.app-root.light .forecast-card small,
+.app-root.light .weather-hour-card small,
+.app-root.light .seismic-card span,
+.app-root.light .seismic-controls span,
+.app-root.light .seismic-stat span,
+.app-root.light .quake-highlight span,
+.app-root.light .quake-item p,
+.app-root.light .population-card span,
+.app-root.light .population-panel small,
+.app-root.light .population-hero p,
+.app-root.light .population-section-title p,
+.app-root.light .population-stats span,
+.app-root.light .population-forecast-item span,
+.app-root.light .economic-card span,
+.app-root.light .building-hero p,
+.app-root.light .building-hero span,
+.app-root.light .building-form-panel label,
+.app-root.light .building-list-item span,
+.app-root.light .risk-score-row p,
+.app-root.light .breakdown-item p,
+.app-root.light .methodology-list,
+.app-root.light .building-card span,
+.app-root.light .building-panel small,
+.app-root.light .map-summary-card span,
+.app-root.light .map-summary-card small {
+  color: var(--app-muted);
+}
+
+.app-root.light .map-control-panel button,
+.app-root.light .map-update-note,
+.app-root.light .dashboard-mini-card,
+.app-root.light .metric-grid div,
+.app-root.light .walk-time,
+.app-root.light .detail-toggle,
+.app-root.light .detail-box,
+.app-root.light .population-summary span,
+.app-root.light .forecast-item,
+.app-root.light .empty-chart,
+.app-root.light .hour-card,
+.app-root.light .daily-card,
+.app-root.light .weather-metric,
+.app-root.light .seismic-filter,
+.app-root.light .segmented button,
+.app-root.light .quake-highlight,
+.app-root.light .quake-item,
+.app-root.light .building-item,
+.app-root.light .population-stats div,
+.app-root.light .population-forecast-item,
+.app-root.light .economic-card,
+.app-root.light .ai-analysis-card,
+.app-root.light .building-form-panel input,
+.app-root.light .building-form-panel select,
+.app-root.light .form-preview,
+.app-root.light .building-list-item,
+.app-root.light .resistance-basis span,
+.app-root.light .breakdown-item,
+.app-root.light .factor-list span,
+.app-root.light .factor-row,
+.app-root.light .economy-card,
+.app-root.light .population-source-note {
+  border-color: var(--app-border);
+  background: var(--app-surface-2);
+  color: var(--app-text);
+}
+
+.app-root.light .weather-panel.primary {
+  border-color: #bae6fd;
+  background: linear-gradient(135deg, #e0f2fe, #ccfbf1);
+  color: #0f172a;
+}
+
+.app-root.light .weather-hero.sunny {
+  background: linear-gradient(135deg, #fef3c7, #bae6fd 55%, #fde68a);
+}
+
+.app-root.light .weather-hero.cloudy {
+  background: linear-gradient(135deg, #f1f5f9, #ccfbf1);
+}
+
+.app-root.light .weather-hero.rainy {
+  background: linear-gradient(135deg, #dbeafe, #bae6fd, #f8fafc);
+}
+
+.app-root.light .weather-hero.storm {
+  background: linear-gradient(135deg, #ede9fe, #dbeafe, #f8fafc);
+}
+
+.app-root.light .weather-hero-actions button {
+  border-color: #bae6fd;
+  background: rgba(255, 255, 255, 0.72);
+  color: #075985;
+}
+
+.app-root.light .weather-orbit {
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.app-root.light .weather-panel.primary .weather-summary,
+.app-root.light .weather-panel.primary .metric-grid span {
+  color: #334155;
+}
+
+.app-root.light .weather-panel.primary .metric-grid div {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.app-root.light .detail-toggle:hover {
+  background: #e2e8f0;
+}
+
+.app-root.light .aqi-status.neutral,
+.app-root.light .air-recommendation.neutral {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.app-root.light .weather-tip-panel.good {
+  border-color: #22c55e;
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.app-root.light .weather-tip-panel.medium {
+  border-color: #84cc16;
+  background: #ecfccb;
+  color: #365314;
+}
+
+.app-root.light .weather-tip-panel.bad {
+  border-color: #f59e0b;
+  background: #fef3c7;
+  color: #713f12;
+}
+
+.app-root.light .weather-tip-panel.danger {
+  border-color: #ef4444;
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.app-root.light .weather-tip-panel.neutral {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.app-root.light .weather-tip-title span {
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.app-root.light .segmented button.active {
+  border-color: #0284c7;
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.app-root.light .risk-badge.low,
+.app-root.light .seismic-alert.low {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.app-root.light .risk-badge.medium,
+.app-root.light .seismic-alert.medium {
+  background: #fef3c7;
+  color: #713f12;
+}
+
+.app-root.light .risk-badge.high,
+.app-root.light .seismic-alert.high {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.app-root.light .quake-highlight p {
+  color: #475569;
+}
+
+.app-root.light .quake-item a {
+  color: #0369a1;
+}
+
+.app-root.light .quake-mag {
+  background: #ffffff;
+}
+
+.app-root.light .economic-card p,
+.app-root.light .economic-card.muted,
+.app-root.light .ai-analysis-card small {
+  color: #475569;
+}
+
+.app-root.light .economic-card a {
+  color: #0369a1;
+}
+
+.app-root.light .ai-analysis-card {
+  border-left-color: #16a34a;
+}
+
+.app-root.light .ai-analysis-card span {
+  color: #15803d;
+}
+
+.app-root.light .building-form-panel input::placeholder {
+  color: #64748b;
+}
+
+.app-root.light .building-form-panel button {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.app-root.light .building-hero-badge {
+  background: rgba(255, 255, 255, 0.72);
+  color: #075985;
+}
+
+.app-root.light .risk-modal-header.low,
+.app-root.light .risk-score.low,
+.app-root.light .risk-recommendation.low,
+.app-root.light .seismic-resistance.low {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.app-root.light .risk-modal-header.medium,
+.app-root.light .risk-score.medium,
+.app-root.light .risk-recommendation.medium,
+.app-root.light .seismic-resistance.medium {
+  background: #ecfccb;
+  color: #365314;
+}
+
+.app-root.light .risk-modal-header.high,
+.app-root.light .risk-score.high,
+.app-root.light .risk-recommendation.high,
+.app-root.light .seismic-resistance.high {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.app-root.light .resistance-ball {
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.app-root.light .breakdown-item span {
+  color: #ca8a04;
+}
+
+.app-root.light .forecast-item strong {
+  color: #15803d;
+}
+
+.app-root.light .daily-card strong,
+.app-root.light .hour-card strong {
+  color: #0f172a;
+}
+
+.app-root.light .recharts-cartesian-axis-tick-value {
+  fill: #334155;
+}
+
+.app-root.light .recharts-cartesian-grid line {
+  stroke: #cbd5e1;
+}
+
+.app-root.light .map-control-panel button.active {
+  border-color: #0284c7;
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.app-root.light .geo-map-hero,
+.app-root.light .weather-hero,
+.app-root.light .seismic-hero,
+.app-root.light .building-hero {
+  border-color: #bae6fd;
+  background: linear-gradient(135deg, #e0f2fe, #ccfbf1);
+  color: #0f172a;
+}
+
+.app-root.light .geo-map-hero p,
+.app-root.light .geo-map-hero span,
+.app-root.light .weather-hero p,
+.app-root.light .weather-hero span,
+.app-root.light .seismic-hero p,
+.app-root.light .seismic-hero span,
+.app-root.light .building-hero p,
+.app-root.light .building-hero span {
+  color: #334155;
+}
+
+@media (max-width: 640px) {
+  .app-body {
+    flex-direction: column;
+  }
+
+  .app-main {
+    width: 100%;
+    margin-left: 0;
+    padding: 14px;
+  }
+
+  .app-footer {
+    margin-left: 0;
+    padding: 10px 12px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .app-main {
+    margin-left: 78px;
+  }
+
+  .app-footer {
+    margin-left: 78px;
+  }
+}

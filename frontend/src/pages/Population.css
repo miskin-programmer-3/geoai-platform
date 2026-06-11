@@ -1,0 +1,157 @@
+.population-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.population-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.population-hero h1 {
+  margin: 0 0 8px;
+}
+
+.population-hero p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  color: #94a3b8;
+}
+
+.source-pill {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+}
+
+.population-card {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 18px;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.population-section-title {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.population-section-title h2,
+.population-section-title p {
+  margin: 0;
+}
+
+.population-section-title p {
+  margin-top: 6px;
+  color: #94a3b8;
+}
+
+.population-stats,
+.economic-grid,
+.population-forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.population-stats {
+  margin-bottom: 16px;
+}
+
+.population-stats div,
+.population-forecast-item,
+.economic-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #1e293b;
+}
+
+.population-stats span,
+.population-forecast-item span,
+.economic-card span {
+  color: #94a3b8;
+}
+
+.population-stats strong,
+.population-forecast-item strong,
+.economic-card strong {
+  font-size: 22px;
+}
+
+.population-stats small,
+.population-forecast-item small,
+.economic-card small {
+  color: #cbd5e1;
+}
+
+.economic-icon {
+  color: #38bdf8;
+}
+
+.economic-card p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.economic-card a {
+  color: #93c5fd;
+}
+
+.economic-card.muted {
+  color: #cbd5e1;
+}
+
+.ai-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.ai-analysis-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #1e293b;
+  border-left: 3px solid #22c55e;
+}
+
+.ai-analysis-card h3,
+.ai-analysis-card p {
+  margin: 0;
+}
+
+.ai-analysis-card span {
+  color: #bbf7d0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ai-analysis-card small {
+  color: #cbd5e1;
+}
+
+.population-alert {
+  padding: 12px;
+  border-radius: 8px;
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+
+@media (max-width: 700px) {
+  .population-hero {
+    flex-direction: column;
+  }
+}

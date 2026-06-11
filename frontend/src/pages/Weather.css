@@ -1,0 +1,380 @@
+.weather-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.weather-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 26px;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  box-sizing: border-box;
+}
+
+.weather-hero.sunny {
+  background: linear-gradient(135deg, #0f766e, #0284c7 55%, #f59e0b);
+}
+
+.weather-hero.cloudy {
+  background: linear-gradient(135deg, #334155, #0f766e);
+}
+
+.weather-hero.rainy {
+  background: linear-gradient(135deg, #1e3a8a, #0369a1, #0f172a);
+}
+
+.weather-hero.storm {
+  background: linear-gradient(135deg, #581c87, #1e1b4b, #0f172a);
+}
+
+.weather-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -20% -35% 30%;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.16);
+  transform: rotate(-8deg);
+}
+
+.weather-hero-content,
+.weather-hero-bottom {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  min-width: 0;
+}
+
+.weather-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  flex-wrap: wrap;
+}
+
+.weather-hero h1 {
+  margin: 0;
+  font-size: 34px;
+  overflow-wrap: anywhere;
+}
+
+.weather-description {
+  margin: 8px 0 0;
+  color: rgba(248, 250, 252, 0.86);
+}
+
+.weather-orbit {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.weather-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.weather-hero-actions button {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: rgba(15, 23, 42, 0.42);
+  color: #f8fafc;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.weather-hero-actions button:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.weather-hero-bottom {
+  margin-top: 30px;
+  justify-content: flex-start;
+}
+
+.weather-temp {
+  font-size: 72px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.weather-temp span {
+  font-size: 26px;
+  margin-left: 4px;
+}
+
+.weather-hero-meta {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.weather-hero-meta strong {
+  font-size: 22px;
+}
+
+.weather-current-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+.weather-metric,
+.weather-panel,
+.weather-tip-panel,
+.weather-night-note {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+  box-sizing: border-box;
+}
+
+.weather-metric {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.weather-metric div {
+  color: #38bdf8;
+}
+
+.weather-metric span,
+.hour-card span,
+.hour-card small,
+.daily-card p,
+.daily-details,
+.sun-row {
+  color: #94a3b8;
+}
+
+.weather-metric strong {
+  font-size: 22px;
+}
+
+.weather-tip-panel,
+.weather-night-note {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+}
+
+.weather-tip-panel.good {
+  background: #064e3b;
+  border-color: #10b981;
+  color: #d1fae5;
+}
+
+.weather-tip-panel.medium {
+  background: #365314;
+  border-color: #84cc16;
+  color: #ecfccb;
+}
+
+.weather-tip-panel.bad {
+  background: #713f12;
+  border-color: #f59e0b;
+  color: #fef3c7;
+}
+
+.weather-tip-panel.danger {
+  background: #7f1d1d;
+  border-color: #ef4444;
+  color: #fee2e2;
+}
+
+.weather-tip-panel.neutral {
+  background: #334155;
+}
+
+.weather-tip-panel h2,
+.weather-tip-panel p,
+.weather-night-note p {
+  margin: 0;
+}
+
+.weather-tip-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.weather-tip-title span {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.weather-tip-panel p {
+  margin-top: 6px;
+  color: inherit;
+}
+
+.weather-panel {
+  padding: 18px;
+  min-width: 0;
+}
+
+.weather-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.weather-panel-title h2 {
+  margin: 0;
+}
+
+.hourly-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(118px, 140px);
+  gap: 10px;
+  overflow-x: auto;
+  max-width: 100%;
+  padding-bottom: 4px;
+}
+
+.hour-card {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 14px;
+  border-radius: 8px;
+  background: #1e293b;
+  min-width: 0;
+}
+
+.daily-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+.daily-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #1e293b;
+  min-width: 0;
+}
+
+.daily-head,
+.daily-details,
+.sun-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+
+.daily-card strong {
+  font-size: 24px;
+}
+
+.daily-card p {
+  margin: 0;
+}
+
+.daily-details {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.daily-details span,
+.sun-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.weather-error {
+  padding: 12px;
+  border-radius: 8px;
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+
+@media (max-width: 760px) {
+  .weather-page {
+    width: 100%;
+  }
+
+  .weather-hero {
+    padding: 20px;
+  }
+
+  .weather-hero-content,
+  .weather-hero-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .weather-hero-actions {
+    justify-content: flex-start;
+  }
+
+  .weather-hero h1 {
+    font-size: 27px;
+  }
+
+  .weather-temp {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 560px) {
+  .weather-current-grid,
+  .daily-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-orbit {
+    width: 82px;
+    height: 82px;
+  }
+
+  .weather-orbit svg {
+    width: 54px;
+    height: 54px;
+  }
+
+  .weather-panel,
+  .weather-tip-panel,
+  .weather-night-note {
+    padding: 14px;
+  }
+
+  .hourly-strip {
+    grid-auto-columns: minmax(105px, 120px);
+  }
+}

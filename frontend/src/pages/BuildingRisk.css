@@ -1,0 +1,393 @@
+.building-risk-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.building-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 22px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #172554, #0f766e);
+  color: #e2e8f0;
+}
+
+.building-hero h1,
+.building-hero p,
+.building-hero span {
+  margin: 0;
+}
+
+.building-hero h1 {
+  margin: 8px 0;
+  font-size: 32px;
+}
+
+.building-hero p {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #cbd5e1;
+}
+
+.building-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.building-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
+  gap: 16px;
+  min-width: 0;
+}
+
+.building-map-panel,
+.building-form-panel,
+.building-list-panel,
+.risk-modal {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.2);
+  min-width: 0;
+}
+
+.building-map-panel,
+.building-form-panel,
+.building-list-panel {
+  padding: 18px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.panel-title h2 {
+  margin: 0;
+}
+
+.building-map {
+  width: 100%;
+  height: 520px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.building-form-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.building-form-panel label {
+  display: grid;
+  gap: 7px;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.building-form-panel input,
+.building-form-panel select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: #1e293b;
+  color: #e2e8f0;
+  outline: none;
+}
+
+.building-form-panel input:focus,
+.building-form-panel select:focus {
+  border-color: #38bdf8;
+}
+
+.form-preview {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.building-form-panel button {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #38bdf8;
+  color: #082f49;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.building-form-panel button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.building-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.building-list-item {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #1e293b;
+}
+
+.building-list-item span {
+  color: #94a3b8;
+}
+
+.risk-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.72);
+}
+
+.risk-modal {
+  width: min(760px, 100%);
+  max-height: min(88vh, 820px);
+  overflow-y: auto;
+}
+
+.risk-modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px;
+  border-radius: 8px 8px 0 0;
+}
+
+.risk-modal-header.low,
+.risk-score.low,
+.risk-recommendation.low,
+.seismic-resistance.low {
+  background: #064e3b;
+  color: #d1fae5;
+}
+
+.risk-modal-header.medium,
+.risk-score.medium,
+.risk-recommendation.medium,
+.seismic-resistance.medium {
+  background: #365314;
+  color: #ecfccb;
+}
+
+.risk-modal-header.high,
+.risk-score.high,
+.risk-recommendation.high,
+.seismic-resistance.high {
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+
+.risk-modal-header span,
+.risk-modal-header h2 {
+  margin: 0;
+}
+
+.risk-modal-header h2 {
+  margin-top: 5px;
+}
+
+.risk-modal-header button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  cursor: pointer;
+}
+
+.risk-score-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 18px;
+}
+
+.risk-score {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  border-radius: 8px;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.risk-score span {
+  font-size: 16px;
+}
+
+.risk-score-row p {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+}
+
+.risk-recommendation {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 18px 18px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.risk-recommendation p {
+  margin: 0;
+}
+
+.risk-modal section {
+  padding: 0 18px 18px;
+}
+
+.risk-modal h3 {
+  margin: 0 0 10px;
+}
+
+.breakdown-list {
+  display: grid;
+  gap: 10px;
+}
+
+.seismic-resistance {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 8px;
+}
+
+.resistance-ball {
+  display: grid;
+  place-items: center;
+  min-height: 78px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.resistance-ball span {
+  font-size: 14px;
+}
+
+.seismic-resistance p {
+  margin: 8px 0 0;
+}
+
+.resistance-basis {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.resistance-basis span {
+  padding: 10px;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.breakdown-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #1e293b;
+}
+
+.breakdown-item p {
+  margin: 6px 0 0;
+  color: #94a3b8;
+}
+
+.breakdown-item span {
+  font-weight: 900;
+  color: #facc15;
+}
+
+.factor-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.factor-list span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.methodology-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #cbd5e1;
+}
+
+.methodology-list li {
+  margin-bottom: 7px;
+}
+
+@media (max-width: 980px) {
+  .building-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .building-hero {
+    flex-direction: column;
+  }
+
+  .building-hero-badge {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .building-map {
+    height: 380px;
+  }
+
+  .risk-score-row {
+    grid-template-columns: 1fr;
+  }
+
+  .seismic-resistance {
+    grid-template-columns: 1fr;
+  }
+}

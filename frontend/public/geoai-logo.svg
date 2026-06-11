@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="GeoAI logo">
+  <defs>
+    <radialGradient id="greenGlow" cx="66%" cy="28%" r="32%">
+      <stop offset="0" stop-color="#22c55e" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blueGlow" cx="32%" cy="70%" r="36%">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="markBg" x1="112" y1="92" x2="420" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#082f49"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="shadow" x="36" y="36" width="440" height="440" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#0ea5e9" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="116" fill="#f8fafc"/>
+  <g filter="url(#shadow)">
+    <rect x="76" y="76" width="360" height="360" rx="80" fill="url(#markBg)" stroke="#38bdf8" stroke-opacity="0.46" stroke-width="8"/>
+    <rect x="76" y="76" width="360" height="360" rx="80" fill="url(#greenGlow)"/>
+    <rect x="76" y="76" width="360" height="360" rx="80" fill="url(#blueGlow)"/>
+    <line x1="76" y1="256" x2="436" y2="256" stroke="#bae6fd" stroke-opacity="0.24" stroke-width="6"/>
+    <line x1="256" y1="76" x2="256" y2="436" stroke="#bae6fd" stroke-opacity="0.24" stroke-width="6"/>
+    <circle cx="256" cy="256" r="116" fill="none" stroke="#7dd3fc" stroke-opacity="0.26" stroke-width="8"/>
+    <path d="M256 140c-58 0-105 47-105 105 0 78 105 143 105 143s105-65 105-143c0-58-47-105-105-105Zm0 146c-25 0-45-20-45-45s20-45 45-45 45 20 45 45-20 45-45 45Z" fill="#7dd3fc"/>
+    <path d="M348 114l13 36 36 13-36 13-13 36-13-36-36-13 36-13 13-36Z" fill="#bef264"/>
+  </g>
+</svg>
