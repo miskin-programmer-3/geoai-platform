@@ -59,7 +59,7 @@ npm install
 npm run dev
 ```
 
-Frontend odatda `http://localhost:5173` manzilida, backend esa `http://127.0.0.1:8000` manzilida ishlaydi.
+Frontend odatda `http://localhost:5173` manzilida, backend esa `http://127.0.0.1:8001` manzilida ishlaydi.
 
 ## Diplom uchun izoh
 

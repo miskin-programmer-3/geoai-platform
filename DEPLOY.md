@@ -4,84 +4,90 @@
 
 Recommended production setup:
 
-- Frontend: React/Vite static build served by the hosting panel or Nginx.
-- Backend: FastAPI/Uvicorn served as a Python app or on a VPS behind Nginx.
-- Domain:
-  - Main site: `https://your-domain.uz`
-  - API: `https://api.your-domain.uz`
+- Frontend: Netlify, deployed from GitHub.
+- Backend: Railway FastAPI service.
+- Main domain: `https://geoaiplatform.uz`
+- API: Railway backend public URL, or later `https://api.geoaiplatform.uz`
 
-## Frontend Environment
+Netlify should manage SSL for the frontend domain. Do not issue the
+`geoaiplatform.uz` frontend certificate from Plesk after the domain is connected
+to Netlify.
 
-Create `frontend/.env.production` on the server or in the CI/CD environment:
+## Frontend on Netlify
+
+The repository includes `netlify.toml` for this monorepo setup:
+
+```toml
+[build]
+  base = "frontend"
+  command = "npm ci && npm run build"
+  publish = "dist"
+```
+
+Netlify deploy steps:
+
+1. Push the repository to GitHub.
+2. In Netlify, choose **Add new site**.
+3. Choose **Import an existing project**.
+4. Select GitHub and choose the `geoai-platform` repository.
+5. Netlify should read `netlify.toml` automatically.
+6. Confirm the build settings:
+   - Base directory: `frontend`
+   - Build command: `npm ci && npm run build`
+   - Publish directory: `dist`
+7. Deploy the site.
+
+Frontend API variable:
 
 ```env
-VITE_API_BASE_URL=https://api.your-domain.uz
+VITE_API_BASE_URL=https://geoai-platform-production.up.railway.app
 ```
 
-Then build:
+This value is already included in `netlify.toml`. If the Railway backend URL is
+different, update it in Netlify environment variables or in `netlify.toml`.
 
-```bash
-cd frontend
-npm install
-npm run build
+React Router refresh support is handled by this redirect in `netlify.toml`:
+
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 ```
 
-Upload the contents of `frontend/dist` to the public web directory.
+## Domain on Netlify
 
-## Backend Environment
+After the Netlify preview URL works:
 
-Create `backend/.env` on the server. Do not commit this file to GitHub.
+1. Open the Netlify site.
+2. Go to **Domain management**.
+3. Add custom domain:
+   - `geoaiplatform.uz`
+   - `www.geoaiplatform.uz`
+4. Netlify will show the DNS records that must be added at the domain DNS
+   provider.
+5. Add those records in Eskiz/Plesk DNS.
+6. Remove or replace old Plesk web records only when Netlify tells you to.
 
-Required SMS settings for Eskiz:
+Keep mail records unless you are intentionally moving email away from Eskiz:
 
-```env
-SMS_PROVIDER=eskiz
-ESKIZ_EMAIL=your-eskiz-email
-ESKIZ_PASSWORD=your-eskiz-password
-ESKIZ_FROM=4546
-```
+- `MX`
+- `mail.geoaiplatform.uz`
+- `webmail.geoaiplatform.uz`
+- `_dmarc`
+- SPF `TXT`
 
-Email settings are optional unless email registration is used:
+## Backend on Railway
 
-```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-SMTP_FROM=your-email@gmail.com
-SMTP_FROM_NAME=GeoAI Platformasi
-```
+Railway remains the backend host.
 
-## GitHub Auto Deploy
+Railway backend service settings:
 
-Common flow:
+- Root directory: `backend`
+- Config file: `backend/railway.json`
+- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 
-1. Push code from VS Code to GitHub.
-2. GitHub Actions builds frontend.
-3. GitHub Actions deploys files to hosting through SSH, FTP, or the hosting panel Git feature.
-4. Backend restarts on the server.
-
-Exact workflow depends on whether the hosting has SSH/Python app support.
-
-## Railway FastAPI Backend
-
-Railway is the recommended target for the FastAPI backend.
-
-In Railway:
-
-1. Create a new project from the GitHub repository.
-2. Select the `backend` folder as the service root directory.
-3. Railway will use `backend/railway.json`.
-4. Add production variables in Railway Variables. Do not commit real secrets.
-5. After deploy, generate a public domain and use it as the frontend API URL.
-
-Start command:
-
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
-```
-
-Required Railway variables for Eskiz SMS:
+Required Railway variables for SMS:
 
 ```env
 SMS_PROVIDER=eskiz
@@ -101,75 +107,32 @@ SMTP_FROM=your-email@gmail.com
 SMTP_FROM_NAME=GeoAI Platformasi
 ```
 
-## Shared Hosting Python Backend
+## Local Development
 
-If the hosting panel supports "Python web-server" but not a persistent Uvicorn
-process, use the WSGI adapter entrypoint:
-
-```text
-backend/passenger_wsgi.py
-```
-
-Install lightweight production dependencies:
+Backend:
 
 ```bash
-pip install -r requirements.production.txt
+cd backend
+venv\Scripts\activate
+uvicorn app.main:app --reload --port 8001
 ```
 
-The production file intentionally does not install `ultralytics`, because the
-current FastAPI routes do not import `app/ai.py` and most shared hostings cannot
-install heavy ML dependencies reliably.
+Frontend:
 
-## geoaiplatform.uz Suggested Domains
-
-Use:
-
-```text
-https://geoaiplatform.uz
-https://api.geoaiplatform.uz
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-Frontend production variable:
-
-```env
-VITE_API_BASE_URL=https://geoai-platform-production.up.railway.app
-```
-
-## GitHub Secrets for FTP Deploy
-
-If Plesk gives FTP access, add these secrets in GitHub repository settings:
-
-```text
-FTP_SERVER
-FTP_USERNAME
-FTP_PASSWORD
-FTP_FRONTEND_DIR
-```
-
-Example `FTP_FRONTEND_DIR` values depend on Plesk document root, commonly:
-
-```text
-/httpdocs/
-```
-
-or:
-
-```text
-/geoaiplatform.uz/httpdocs/
-```
-
-The workflow file is:
-
-```text
-.github/workflows/frontend-deploy.yml
-```
+Frontend local URL: `http://localhost:5173`
+Backend local URL: `http://127.0.0.1:8001`
 
 ## Google Search
 
-After deployment:
+After Netlify custom domain and SSL are active:
 
-1. Enable HTTPS for `geoaiplatform.uz`.
-2. Make sure `https://geoaiplatform.uz/robots.txt` opens.
-3. Make sure `https://geoaiplatform.uz/sitemap.xml` opens.
-4. Add the domain to Google Search Console.
-5. Submit `https://geoaiplatform.uz/sitemap.xml`.
+1. Make sure `https://geoaiplatform.uz/robots.txt` opens.
+2. Make sure `https://geoaiplatform.uz/sitemap.xml` opens.
+3. Add the domain to Google Search Console.
+4. Submit `https://geoaiplatform.uz/sitemap.xml`.

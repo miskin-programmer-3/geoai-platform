@@ -9,6 +9,10 @@ export function LocationProvider({ children }) {
   });
 
   useEffect(() => {
+    if (!navigator.geolocation) {
+      console.warn("Brauzer geolocation API ni qo'llab-quvvatlamaydi.");
+      return;
+    }
 
     navigator.geolocation.getCurrentPosition(
 
@@ -22,7 +26,7 @@ export function LocationProvider({ children }) {
       },
 
       (error) => {
-        console.log(error);
+        console.warn("Joylashuv aniqlanmadi:", error.message);
       }
 
     );
