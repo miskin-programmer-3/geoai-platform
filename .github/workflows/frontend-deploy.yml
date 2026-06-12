@@ -33,14 +33,23 @@ jobs:
         env:
           VITE_API_BASE_URL: https://api.geoaiplatform.uz
 
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+        working-directory: .
+
       - name: Deploy to hosting via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: frontend/dist/
-          server-dir: ${{ secrets.FTP_FRONTEND_DIR }}
-          log-level: verbose
+        run: |
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" <<EOF
+          set ftp:ssl-allow no
+          set ftp:passive-mode yes
+          set net:timeout 20
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          mirror --reverse --delete --verbose ./dist "$FTP_FRONTEND_DIR"
+          bye
+          EOF
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_FRONTEND_DIR: ${{ secrets.FTP_FRONTEND_DIR }}
