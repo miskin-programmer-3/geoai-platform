@@ -63,6 +63,25 @@ Common flow:
 
 Exact workflow depends on whether the hosting has SSH/Python app support.
 
+## Shared Hosting Python Backend
+
+If the hosting panel supports "Python web-server" but not a persistent Uvicorn
+process, use the WSGI adapter entrypoint:
+
+```text
+backend/passenger_wsgi.py
+```
+
+Install lightweight production dependencies:
+
+```bash
+pip install -r requirements.production.txt
+```
+
+The production file intentionally does not install `ultralytics`, because the
+current FastAPI routes do not import `app/ai.py` and most shared hostings cannot
+install heavy ML dependencies reliably.
+
 ## geoaiplatform.uz Suggested Domains
 
 Use:
