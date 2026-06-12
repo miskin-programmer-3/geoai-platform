@@ -635,28 +635,17 @@ def send_real_email(to_email: str, subject: str, message: str):
     smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
     smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
     smtp_from_name = os.getenv("SMTP_FROM_NAME", "GeoAI Platformasi").strip()
+    resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
+    resend_from = os.getenv("RESEND_FROM", "").strip()
     smtp_use_ssl = os.getenv("SMTP_USE_SSL", "").strip().lower() in {
         "1",
         "true",
         "yes",
     }
 
-    if not smtp_host or not smtp_user or not smtp_password or not smtp_from:
-        remember_email_event(
-            to_email,
-            "not_configured",
-            "SMTP sozlamalari to'liq emas.",
-        )
-        return False, "Email xizmati sozlanmagan. Backend .env fayliga SMTP sozlamalarini kiriting."
-
-    email = EmailMessage()
-    email["From"] = formataddr((smtp_from_name, smtp_from))
-    email["To"] = to_email
-    email["Subject"] = subject
-    email["Reply-To"] = smtp_from
-    email.set_content(message)
-    email.add_alternative(
-        f"""
+    sender = resend_from or formataddr((smtp_from_name, smtp_from))
+    code_value = html.escape(subject.rsplit(':', 1)[-1].strip())
+    html_message = f"""
         <html>
           <body style="font-family:Arial,sans-serif;background:#f8fafc;padding:24px;color:#0f172a;">
             <div style="max-width:520px;margin:auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;">
@@ -665,7 +654,7 @@ def send_real_email(to_email: str, subject: str, message: str):
                 GeoAI platformasida ro'yxatdan o'tishni yakunlash uchun quyidagi kodni kiriting.
               </p>
               <div style="font-size:34px;font-weight:800;letter-spacing:6px;color:#0284c7;background:#e0f2fe;border-radius:10px;padding:16px;text-align:center;">
-                {html.escape(subject.rsplit(':', 1)[-1].strip())}
+                {code_value}
               </div>
               <p style="font-size:13px;color:#64748b;margin:16px 0 0;">
                 Kod 5 daqiqa amal qiladi. Agar bu so'rovni siz yubormagan bo'lsangiz, xabarni e'tiborsiz qoldiring.
@@ -673,9 +662,70 @@ def send_real_email(to_email: str, subject: str, message: str):
             </div>
           </body>
         </html>
-        """,
-        subtype="html",
-    )
+    """
+
+    if resend_api_key:
+        try:
+            payload = json.dumps({
+                "from": sender,
+                "to": [to_email],
+                "subject": subject,
+                "text": message,
+                "html": html_message,
+            }).encode("utf-8")
+            request = urllib.request.Request(
+                "https://api.resend.com/emails",
+                data=payload,
+                headers={
+                    "Authorization": f"Bearer {resend_api_key}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+
+            with urllib.request.urlopen(request, timeout=15) as response:
+                response_body = response.read().decode("utf-8", errors="replace")
+
+            remember_email_event(
+                to_email,
+                "sent",
+                f"Resend API xabarni qabul qildi: {response_body[:180]}",
+            )
+            return True, "Email tasdiqlash kodi real email manzilga yuborildi."
+        except urllib.error.HTTPError as error:
+            error_body = error.read().decode("utf-8", errors="replace")
+            remember_email_event(
+                to_email,
+                "error",
+                f"Resend HTTP {error.code}: {error_body[:400]}",
+            )
+            return False, f"Email API xatolik qaytardi: {error.code}. {error_body[:180]}"
+        except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as error:
+            remember_email_event(
+                to_email,
+                "error",
+                f"Resend API ulanish xatoligi: {error}",
+            )
+            return False, f"Email API ulanish xatoligi: {error}"
+
+    if not smtp_host or not smtp_user or not smtp_password or not smtp_from:
+        remember_email_event(
+            to_email,
+            "not_configured",
+            "SMTP sozlamalari to'liq emas.",
+        )
+        return False, (
+            "Email xizmati sozlanmagan. Railway Variables ichiga RESEND_API_KEY "
+            "yoki SMTP sozlamalarini kiriting."
+        )
+
+    email = EmailMessage()
+    email["From"] = sender
+    email["To"] = to_email
+    email["Subject"] = subject
+    email["Reply-To"] = smtp_from
+    email.set_content(message)
+    email.add_alternative(html_message, subtype="html")
 
     def create_ipv4_connection(host: str, port: int, timeout: int):
         last_error = None
@@ -902,6 +952,8 @@ def get_config_status():
     smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
     smtp_port = os.getenv("SMTP_PORT", "").strip()
     smtp_use_ssl = os.getenv("SMTP_USE_SSL", "").strip()
+    resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
+    resend_from = os.getenv("RESEND_FROM", "").strip()
     simcard_api_key = os.getenv("SIMCARD_API_KEY", "").strip()
     eskiz_email = os.getenv("ESKIZ_EMAIL", "").strip()
     eskiz_password = os.getenv("ESKIZ_PASSWORD", "").strip()
@@ -919,6 +971,8 @@ def get_config_status():
             "smtp_from_set": bool(smtp_from),
             "smtp_port": smtp_port or "587",
             "smtp_use_ssl": smtp_use_ssl or "false",
+            "resend_ready": bool(resend_api_key),
+            "resend_from_set": bool(resend_from),
         },
         "sms": {
             "provider": sms_provider or (
