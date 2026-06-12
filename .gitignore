@@ -31,3 +31,5 @@ Thumbs.db
 backend-launch.log
 backend/data/users.json
 *Текстовый документ.txt
+backend-deploy.zip
+deploy-backend/
