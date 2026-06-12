@@ -132,7 +132,7 @@ https://api.geoaiplatform.uz
 Frontend production variable:
 
 ```env
-VITE_API_BASE_URL=https://api.geoaiplatform.uz
+VITE_API_BASE_URL=https://geoai-platform-production.up.railway.app
 ```
 
 ## GitHub Secrets for FTP Deploy

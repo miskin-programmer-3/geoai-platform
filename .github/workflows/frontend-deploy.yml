@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_BASE_URL: https://api.geoaiplatform.uz
+          VITE_API_BASE_URL: https://geoai-platform-production.up.railway.app
 
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
