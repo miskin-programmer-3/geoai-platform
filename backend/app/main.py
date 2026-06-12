@@ -603,13 +603,28 @@ def send_eskiz_sms(phone: str, message: str):
 
 
 def send_real_sms(phone: str, message: str):
-    sms_provider = os.getenv("SMS_PROVIDER", "simcard").strip().lower()
+    sms_provider = os.getenv("SMS_PROVIDER", "").strip().lower()
     simcard_api_key = os.getenv("SIMCARD_API_KEY", "").strip()
+    eskiz_email = os.getenv("ESKIZ_EMAIL", "").strip()
+    eskiz_password = os.getenv("ESKIZ_PASSWORD", "").strip()
+    eskiz_token = os.getenv("ESKIZ_TOKEN", "").strip()
 
-    if sms_provider == "simcard" or simcard_api_key:
+    if sms_provider == "simcard":
         return send_simcard_sms(phone, message)
 
-    return send_eskiz_sms(phone, message)
+    if sms_provider == "eskiz":
+        return send_eskiz_sms(phone, message)
+
+    if simcard_api_key:
+        return send_simcard_sms(phone, message)
+
+    if eskiz_token or (eskiz_email and eskiz_password):
+        return send_eskiz_sms(phone, message)
+
+    return False, (
+        "SMS xizmati sozlanmagan. Railway Variables ichiga SMS_PROVIDER=eskiz "
+        "va ESKIZ_EMAIL, ESKIZ_PASSWORD qiymatlarini kiriting."
+    )
 
 
 def send_real_email(to_email: str, subject: str, message: str):
@@ -769,6 +784,45 @@ load_users()
 def home():
     return {
         "message": "GeoAI backend ishlayapti"
+    }
+
+
+@app.get("/api/debug/config")
+def get_config_status():
+    smtp_host = os.getenv("SMTP_HOST", "").strip()
+    smtp_user = os.getenv("SMTP_USER", "").strip()
+    smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
+    smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
+    simcard_api_key = os.getenv("SIMCARD_API_KEY", "").strip()
+    eskiz_email = os.getenv("ESKIZ_EMAIL", "").strip()
+    eskiz_password = os.getenv("ESKIZ_PASSWORD", "").strip()
+    eskiz_token = os.getenv("ESKIZ_TOKEN", "").strip()
+    sms_provider = os.getenv("SMS_PROVIDER", "").strip().lower()
+
+    return {
+        "email": {
+            "smtp_ready": bool(
+                smtp_host and smtp_user and smtp_password and smtp_from
+            ),
+            "smtp_host_set": bool(smtp_host),
+            "smtp_user_set": bool(smtp_user),
+            "smtp_password_set": bool(smtp_password),
+            "smtp_from_set": bool(smtp_from),
+        },
+        "sms": {
+            "provider": sms_provider or (
+                "simcard"
+                if simcard_api_key
+                else "eskiz"
+                if eskiz_token or (eskiz_email and eskiz_password)
+                else "not_configured"
+            ),
+            "simcard_ready": bool(simcard_api_key),
+            "eskiz_ready": bool(eskiz_token or (eskiz_email and eskiz_password)),
+            "eskiz_email_set": bool(eskiz_email),
+            "eskiz_password_set": bool(eskiz_password),
+            "eskiz_token_set": bool(eskiz_token),
+        },
     }
 
 
