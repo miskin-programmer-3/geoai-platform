@@ -634,6 +634,11 @@ def send_real_email(to_email: str, subject: str, message: str):
     smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
     smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
     smtp_from_name = os.getenv("SMTP_FROM_NAME", "GeoAI Platformasi").strip()
+    smtp_use_ssl = os.getenv("SMTP_USE_SSL", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
 
     if not smtp_host or not smtp_user or not smtp_password or not smtp_from:
         remember_email_event(
@@ -671,21 +676,60 @@ def send_real_email(to_email: str, subject: str, message: str):
         subtype="html",
     )
 
-    try:
+    def send_with_smtp(port: int, use_ssl: bool):
         context = ssl.create_default_context()
 
-        with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
-            server.starttls(context=context)
+        if use_ssl:
+            server_context = smtplib.SMTP_SSL(
+                smtp_host,
+                port,
+                timeout=20,
+                context=context,
+            )
+        else:
+            server_context = smtplib.SMTP(smtp_host, port, timeout=20)
+
+        with server_context as server:
+            if not use_ssl:
+                server.ehlo()
+                server.starttls(context=context)
+                server.ehlo()
+
             server.login(smtp_user, smtp_password)
             server.send_message(email)
+
+    try:
+        send_with_smtp(smtp_port, smtp_use_ssl or smtp_port == 465)
 
         remember_email_event(
             to_email,
             "sent",
-            f"Gmail SMTP xabarni qabul qildi. From: {smtp_from}",
+            f"SMTP xabarni qabul qildi. Host: {smtp_host}:{smtp_port}. From: {smtp_from}",
         )
         return True, "Email tasdiqlash kodi real email manzilga yuborildi."
     except (OSError, smtplib.SMTPException) as error:
+        if smtp_port != 465 and not smtp_use_ssl:
+            try:
+                send_with_smtp(465, True)
+
+                remember_email_event(
+                    to_email,
+                    "sent",
+                    f"SMTP SSL fallback xabarni qabul qildi. Host: {smtp_host}:465. From: {smtp_from}",
+                )
+                return True, "Email tasdiqlash kodi real email manzilga yuborildi."
+            except (OSError, smtplib.SMTPException) as fallback_error:
+                remember_email_event(
+                    to_email,
+                    "error",
+                    f"STARTTLS error: {error}; SSL fallback error: {fallback_error}",
+                )
+                return False, (
+                    "Email yuborishda SMTP ulanish xatoligi: "
+                    f"{fallback_error}. Railway Variables ichida SMTP_PORT=465 "
+                    "va SMTP_USE_SSL=true qilib qayta deploy qiling."
+                )
+
         remember_email_event(
             to_email,
             "error",
@@ -793,6 +837,8 @@ def get_config_status():
     smtp_user = os.getenv("SMTP_USER", "").strip()
     smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
     smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
+    smtp_port = os.getenv("SMTP_PORT", "").strip()
+    smtp_use_ssl = os.getenv("SMTP_USE_SSL", "").strip()
     simcard_api_key = os.getenv("SIMCARD_API_KEY", "").strip()
     eskiz_email = os.getenv("ESKIZ_EMAIL", "").strip()
     eskiz_password = os.getenv("ESKIZ_PASSWORD", "").strip()
@@ -808,6 +854,8 @@ def get_config_status():
             "smtp_user_set": bool(smtp_user),
             "smtp_password_set": bool(smtp_password),
             "smtp_from_set": bool(smtp_from),
+            "smtp_port": smtp_port or "587",
+            "smtp_use_ssl": smtp_use_ssl or "false",
         },
         "sms": {
             "provider": sms_provider or (
