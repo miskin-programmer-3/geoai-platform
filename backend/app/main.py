@@ -11,6 +11,7 @@ import json
 import os
 import secrets
 import smtplib
+import socket
 import ssl
 import urllib.error
 import urllib.parse
@@ -676,10 +677,56 @@ def send_real_email(to_email: str, subject: str, message: str):
         subtype="html",
     )
 
-    def send_with_smtp(port: int, use_ssl: bool):
+    def create_ipv4_connection(host: str, port: int, timeout: int):
+        last_error = None
+
+        for address in socket.getaddrinfo(
+            host,
+            port,
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+        ):
+            family, socket_type, proto, _, socket_address = address
+
+            try:
+                smtp_socket = socket.socket(family, socket_type, proto)
+                smtp_socket.settimeout(timeout)
+                smtp_socket.connect(socket_address)
+                return smtp_socket
+            except OSError as error:
+                last_error = error
+                try:
+                    smtp_socket.close()
+                except OSError:
+                    pass
+
+        if last_error:
+            raise last_error
+
+        raise OSError(f"{host}:{port} uchun IPv4 manzil topilmadi.")
+
+    def send_with_smtp(port: int, use_ssl: bool, force_ipv4=False):
         context = ssl.create_default_context()
 
-        if use_ssl:
+        if force_ipv4:
+            smtp_socket = create_ipv4_connection(smtp_host, port, 20)
+
+            if use_ssl:
+                smtp_socket = context.wrap_socket(
+                    smtp_socket,
+                    server_hostname=smtp_host,
+                )
+
+            server_context = smtplib.SMTP(timeout=20)
+            server_context.sock = smtp_socket
+            server_context.file = None
+            server_context.helo_resp = None
+            server_context.ehlo_resp = None
+            server_context.esmtp_features = {}
+            server_context.does_esmtp = False
+            server_context.set_debuglevel(0)
+            server_context.getreply()
+        elif use_ssl:
             server_context = smtplib.SMTP_SSL(
                 smtp_host,
                 port,
@@ -708,6 +755,22 @@ def send_real_email(to_email: str, subject: str, message: str):
         )
         return True, "Email tasdiqlash kodi real email manzilga yuborildi."
     except (OSError, smtplib.SMTPException) as error:
+        try:
+            send_with_smtp(smtp_port, smtp_use_ssl or smtp_port == 465, True)
+
+            remember_email_event(
+                to_email,
+                "sent",
+                f"SMTP IPv4 fallback xabarni qabul qildi. Host: {smtp_host}:{smtp_port}. From: {smtp_from}",
+            )
+            return True, "Email tasdiqlash kodi real email manzilga yuborildi."
+        except (OSError, smtplib.SMTPException) as ipv4_error:
+            remember_email_event(
+                to_email,
+                "ipv4_error",
+                f"Default error: {error}; IPv4 fallback error: {ipv4_error}",
+            )
+
         if smtp_port != 465 and not smtp_use_ssl:
             try:
                 send_with_smtp(465, True)
