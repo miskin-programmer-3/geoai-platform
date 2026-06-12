@@ -63,6 +63,44 @@ Common flow:
 
 Exact workflow depends on whether the hosting has SSH/Python app support.
 
+## Railway FastAPI Backend
+
+Railway is the recommended target for the FastAPI backend.
+
+In Railway:
+
+1. Create a new project from the GitHub repository.
+2. Select the `backend` folder as the service root directory.
+3. Railway will use `backend/railway.json`.
+4. Add production variables in Railway Variables. Do not commit real secrets.
+5. After deploy, generate a public domain and use it as the frontend API URL.
+
+Start command:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+Required Railway variables for Eskiz SMS:
+
+```env
+SMS_PROVIDER=eskiz
+ESKIZ_EMAIL=your-eskiz-email
+ESKIZ_PASSWORD=your-eskiz-password
+ESKIZ_FROM=4546
+```
+
+Optional email variables:
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM=your-email@gmail.com
+SMTP_FROM_NAME=GeoAI Platformasi
+```
+
 ## Shared Hosting Python Backend
 
 If the hosting panel supports "Python web-server" but not a persistent Uvicorn
