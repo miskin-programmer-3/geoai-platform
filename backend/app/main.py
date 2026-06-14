@@ -635,6 +635,7 @@ def send_real_email(to_email: str, subject: str, message: str):
     smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
     smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
     smtp_from_name = os.getenv("SMTP_FROM_NAME", "GeoAI Platformasi").strip()
+    smtp_timeout = int(os.getenv("SMTP_TIMEOUT_SECONDS", "8"))
     resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
     resend_from = os.getenv("RESEND_FROM", "").strip()
     smtp_use_ssl = os.getenv("SMTP_USE_SSL", "").strip().lower() in {
@@ -759,7 +760,7 @@ def send_real_email(to_email: str, subject: str, message: str):
         context = ssl.create_default_context()
 
         if force_ipv4:
-            smtp_socket = create_ipv4_connection(smtp_host, port, 20)
+            smtp_socket = create_ipv4_connection(smtp_host, port, smtp_timeout)
 
             if use_ssl:
                 smtp_socket = context.wrap_socket(
@@ -780,11 +781,11 @@ def send_real_email(to_email: str, subject: str, message: str):
             server_context = smtplib.SMTP_SSL(
                 smtp_host,
                 port,
-                timeout=20,
+                timeout=smtp_timeout,
                 context=context,
             )
         else:
-            server_context = smtplib.SMTP(smtp_host, port, timeout=20)
+            server_context = smtplib.SMTP(smtp_host, port, timeout=smtp_timeout)
 
         with server_context as server:
             if not use_ssl:
@@ -952,6 +953,7 @@ def get_config_status():
     smtp_from = os.getenv("SMTP_FROM", smtp_user).strip()
     smtp_port = os.getenv("SMTP_PORT", "").strip()
     smtp_use_ssl = os.getenv("SMTP_USE_SSL", "").strip()
+    smtp_timeout = os.getenv("SMTP_TIMEOUT_SECONDS", "").strip()
     resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
     resend_from = os.getenv("RESEND_FROM", "").strip()
     simcard_api_key = os.getenv("SIMCARD_API_KEY", "").strip()
@@ -971,6 +973,7 @@ def get_config_status():
             "smtp_from_set": bool(smtp_from),
             "smtp_port": smtp_port or "587",
             "smtp_use_ssl": smtp_use_ssl or "false",
+            "smtp_timeout_seconds": smtp_timeout or "8",
             "resend_ready": bool(resend_api_key),
             "resend_from_set": bool(resend_from),
         },
