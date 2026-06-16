@@ -313,6 +313,7 @@ def save_visits():
     VISITS_FILE.write_text(
         json.dumps({
             "total_visit_count": total_visit_count,
+            "visitor_ids": sorted(known_visitors),
             "updated_at": datetime.utcnow().isoformat(),
         }, ensure_ascii=False, indent=2),
         encoding="utf-8",
@@ -327,16 +328,35 @@ def load_visits():
 
     try:
         data = json.loads(VISITS_FILE.read_text(encoding="utf-8"))
+        saved_visitors = data.get("visitor_ids", [])
+
+        if isinstance(saved_visitors, list):
+            known_visitors.update(
+                normalize_visitor_id(visitor_id)
+                for visitor_id in saved_visitors
+                if normalize_visitor_id(visitor_id)
+            )
+
         total_visit_count = max(0, int(data.get("total_visit_count", 0)))
     except (ValueError, TypeError, json.JSONDecodeError, OSError):
         total_visit_count = 0
 
 
-def record_site_visit():
+def record_site_visit(visitor_id: str):
     global total_visit_count
 
+    normalized_visitor = normalize_visitor_id(visitor_id)
+
+    if not normalized_visitor:
+        return False
+
+    if normalized_visitor in known_visitors:
+        return False
+
+    known_visitors.add(normalized_visitor)
     total_visit_count += 1
     save_visits()
+    return True
 
 
 def public_user(contact: str, user: dict):
@@ -990,7 +1010,6 @@ def mark_visitor_online(visitor_id: str):
         return
 
     visitor_sessions[normalized_visitor] = datetime.utcnow()
-    known_visitors.add(normalized_visitor)
     prune_online_sessions()
 
 
@@ -1581,7 +1600,7 @@ def update_online_status(payload: OnlineHeartbeatRequest):
         mark_visitor_online(visitor_id)
 
     if payload.track_visit:
-        record_site_visit()
+        record_site_visit(visitor_id)
 
     if saved_contact:
         mark_user_online(saved_contact)
