@@ -3,7 +3,7 @@
 import axios from "axios";
 
 // Backend bilan bog'lanish
-const API_BASE_URL =
+export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001";
 
 const API = axios.create({
@@ -279,6 +279,37 @@ export async function sendOnlineHeartbeat({
   );
 
   return response.data;
+}
+
+export function sendOfflineSignal({
+  contact,
+  visitorId
+}) {
+  const payload = JSON.stringify({
+    contact: contact || null,
+    visitor_id: visitorId || null
+  });
+
+  const url = `${API_BASE_URL}/api/auth/offline`;
+
+  if (navigator.sendBeacon) {
+    const blob = new Blob(
+      [payload],
+      { type: "application/json" }
+    );
+
+    navigator.sendBeacon(url, blob);
+    return;
+  }
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: payload,
+    keepalive: true
+  }).catch(() => {});
 }
 
 export default API;

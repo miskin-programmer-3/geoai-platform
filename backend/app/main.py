@@ -154,6 +154,11 @@ class OnlineHeartbeatResponse(BaseModel):
     message: str
 
 
+class OfflineRequest(BaseModel):
+    visitor_id: str | None = Field(default=None, min_length=8, max_length=120)
+    contact: str | None = Field(default=None, min_length=5, max_length=120)
+
+
 class PasswordResetCodeRequest(BaseModel):
     method: str = Field(..., pattern="^(phone|email)$")
     phone: str | None = Field(default=None, min_length=7, max_length=24)
@@ -959,7 +964,7 @@ def find_any_user_contact(contact: str):
 
 
 def prune_online_sessions():
-    active_until = datetime.utcnow() - timedelta(seconds=45)
+    active_until = datetime.utcnow() - timedelta(seconds=15)
     expired_contacts = [
         contact
         for contact, seen_at in online_sessions.items()
@@ -1011,6 +1016,25 @@ def mark_visitor_online(visitor_id: str):
 
     visitor_sessions[normalized_visitor] = datetime.utcnow()
     prune_online_sessions()
+
+
+def mark_visitor_offline(visitor_id: str):
+    normalized_visitor = normalize_visitor_id(visitor_id)
+
+    if not normalized_visitor:
+        return
+
+    visitor_sessions.pop(normalized_visitor, None)
+
+
+def mark_user_offline(contact: str):
+    saved_contact = find_any_user_contact(contact) or normalize_contact(contact)
+
+    if not saved_contact:
+        return
+
+    online_sessions.pop(saved_contact, None)
+    online_users.discard(saved_contact)
 
 
 def count_online_users():
@@ -1618,6 +1642,22 @@ def update_online_status(payload: OnlineHeartbeatRequest):
         "online_users": count_online_users(),
         "total_visitors": total_visit_count,
         "message": "Tashrifchi online holatda.",
+    }
+
+
+@app.post("/api/auth/offline", response_model=OnlineHeartbeatResponse)
+def update_offline_status(payload: OfflineRequest):
+    if payload.visitor_id:
+        mark_visitor_offline(payload.visitor_id)
+
+    if payload.contact:
+        mark_user_offline(payload.contact)
+
+    return {
+        "status": "offline",
+        "online_users": count_online_users(),
+        "total_visitors": total_visit_count,
+        "message": "Tashrifchi offline holatga o'tkazildi.",
     }
 
 

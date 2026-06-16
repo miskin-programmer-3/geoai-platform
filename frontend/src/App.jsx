@@ -16,7 +16,10 @@ import BuildingRisk from "./pages/BuildingRisk";
 import MapPage from "./pages/MapPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { sendOnlineHeartbeat } from "./services/api";
+import {
+  sendOfflineSignal,
+  sendOnlineHeartbeat
+} from "./services/api";
 
 import "./App.css";
 
@@ -45,14 +48,17 @@ function App() {
     let isMounted = true;
     let firstHeartbeat = true;
 
+    function getSavedUser() {
+      const savedUser =
+        window.localStorage.getItem("geoai_user");
+
+      return savedUser ? JSON.parse(savedUser) : null;
+    }
+
     async function sendHeartbeat() {
       try {
         const visitorId = getVisitorId();
-        const savedUser =
-          window.localStorage.getItem("geoai_user");
-
-        const user =
-          savedUser ? JSON.parse(savedUser) : null;
+        const user = getSavedUser();
 
         const stats =
           await sendOnlineHeartbeat({
@@ -79,12 +85,31 @@ function App() {
 
     const timer = window.setInterval(
       sendHeartbeat,
-      15 * 1000
+      8 * 1000
     );
+
+    function sendOffline() {
+      try {
+        const visitorId = getVisitorId();
+        const user = getSavedUser();
+
+        sendOfflineSignal({
+          contact: user?.contact || null,
+          visitorId
+        });
+      } catch (error) {
+        console.error("Offline holat yuborilmadi:", error);
+      }
+    }
+
+    window.addEventListener("pagehide", sendOffline);
+    window.addEventListener("beforeunload", sendOffline);
 
     return () => {
       isMounted = false;
       window.clearInterval(timer);
+      window.removeEventListener("pagehide", sendOffline);
+      window.removeEventListener("beforeunload", sendOffline);
     };
   }, []);
 
