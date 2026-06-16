@@ -37,16 +37,6 @@ function getVisitorId() {
   return newVisitorId;
 }
 
-function shouldTrackVisit() {
-  const storageKey = "geoai_visit_tracked";
-
-  if (window.sessionStorage.getItem(storageKey))
-    return false;
-
-  window.sessionStorage.setItem(storageKey, "1");
-  return true;
-}
-
 function App() {
   const { darkMode } =
     useContext(ThemeContext);
@@ -68,7 +58,7 @@ function App() {
           await sendOnlineHeartbeat({
             contact: user?.contact || null,
             visitorId,
-            trackVisit: firstHeartbeat && shouldTrackVisit()
+            trackVisit: firstHeartbeat
           });
 
         window.dispatchEvent(
