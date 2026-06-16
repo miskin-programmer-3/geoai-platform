@@ -20,6 +20,23 @@ import { sendOnlineHeartbeat } from "./services/api";
 
 import "./App.css";
 
+function getVisitorId() {
+  const storageKey = "geoai_visitor_id";
+  const savedVisitorId =
+    window.localStorage.getItem(storageKey);
+
+  if (savedVisitorId)
+    return savedVisitorId;
+
+  const newVisitorId =
+    window.crypto?.randomUUID?.() ||
+    `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  window.localStorage.setItem(storageKey, newVisitorId);
+
+  return newVisitorId;
+}
+
 function App() {
   const { darkMode } =
     useContext(ThemeContext);
@@ -29,18 +46,17 @@ function App() {
 
     async function sendHeartbeat() {
       try {
+        const visitorId = getVisitorId();
         const savedUser =
           window.localStorage.getItem("geoai_user");
 
-        if (!savedUser)
-          return;
+        const user =
+          savedUser ? JSON.parse(savedUser) : null;
 
-        const user = JSON.parse(savedUser);
-
-        if (!user?.contact)
-          return;
-
-        await sendOnlineHeartbeat(user.contact);
+        await sendOnlineHeartbeat({
+          contact: user?.contact || null,
+          visitorId
+        });
       } catch (error) {
         if (isMounted)
           console.error("Online holat yuborilmadi:", error);

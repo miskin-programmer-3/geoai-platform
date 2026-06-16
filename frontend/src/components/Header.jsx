@@ -12,7 +12,7 @@ function Header() {
 
   const [stats, setStats] =
     useState({
-      registeredUsers: 0,
+      totalVisitors: 0,
       onlineUsers: 0
     });
 
@@ -28,7 +28,7 @@ function Header() {
           return;
 
         setStats({
-          registeredUsers: data.registered_users ?? 0,
+          totalVisitors: data.total_visitors ?? data.registered_users ?? 0,
           onlineUsers: data.online_users ?? 0
         });
       } catch (error) {
@@ -59,8 +59,8 @@ function Header() {
         <div className="header-stats">
           <span className="header-stat">
             <Users size={16} />
-            <strong>{stats.registeredUsers}</strong>
-            <small>ro'yxatdan o'tgan</small>
+            <strong>{stats.totalVisitors}</strong>
+            <small>tashrifchi</small>
           </span>
 
           <span className="header-stat online">

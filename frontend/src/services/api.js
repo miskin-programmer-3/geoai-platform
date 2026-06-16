@@ -264,11 +264,15 @@ export async function getAuthStats() {
   return response.data;
 }
 
-export async function sendOnlineHeartbeat(contact) {
+export async function sendOnlineHeartbeat({
+  contact,
+  visitorId
+}) {
   const response = await API.post(
     "/api/auth/online",
     {
-      contact
+      contact: contact || null,
+      visitor_id: visitorId || null
     }
   );
 

@@ -137,16 +137,19 @@ class LoginResponse(BaseModel):
 class AuthStatsResponse(BaseModel):
     registered_users: int
     online_users: int
+    total_visitors: int
     message: str
 
 
 class OnlineHeartbeatRequest(BaseModel):
-    contact: str = Field(..., min_length=5, max_length=120)
+    contact: str | None = Field(default=None, min_length=5, max_length=120)
+    visitor_id: str | None = Field(default=None, min_length=8, max_length=120)
 
 
 class OnlineHeartbeatResponse(BaseModel):
     status: str
     online_users: int
+    total_visitors: int
     message: str
 
 
@@ -215,6 +218,8 @@ password_reset_store: dict[str, dict] = {}
 registered_users: dict[str, dict] = {}
 online_users: set[str] = set()
 online_sessions: dict[str, datetime] = {}
+visitor_sessions: dict[str, datetime] = {}
+known_visitors: set[str] = set()
 sms_events: list[dict] = []
 email_events: list[dict] = []
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -911,6 +916,15 @@ def prune_online_sessions():
         online_sessions.pop(contact, None)
         online_users.discard(contact)
 
+    expired_visitors = [
+        visitor_id
+        for visitor_id, seen_at in visitor_sessions.items()
+        if seen_at < active_until
+    ]
+
+    for visitor_id in expired_visitors:
+        visitor_sessions.pop(visitor_id, None)
+
 
 def mark_user_online(contact: str):
     if not contact:
@@ -922,9 +936,33 @@ def mark_user_online(contact: str):
     prune_online_sessions()
 
 
+def normalize_visitor_id(value: str | None):
+    if not value:
+        return ""
+
+    safe = "".join(
+        ch
+        for ch in value.strip().lower()
+        if ch.isalnum() or ch in {"-", "_"}
+    )
+
+    return safe[:120]
+
+
+def mark_visitor_online(visitor_id: str):
+    normalized_visitor = normalize_visitor_id(visitor_id)
+
+    if not normalized_visitor:
+        return
+
+    visitor_sessions[normalized_visitor] = datetime.utcnow()
+    known_visitors.add(normalized_visitor)
+    prune_online_sessions()
+
+
 def count_online_users():
     prune_online_sessions()
-    return len(online_sessions)
+    return len(visitor_sessions)
 
 
 app.add_middleware(
@@ -1493,29 +1531,36 @@ def get_auth_stats():
     return {
         "registered_users": len(registered_users),
         "online_users": count_online_users(),
-        "message": "Foydalanuvchilar statistikasi saqlangan profil ma'lumotlari asosida hisoblandi.",
+        "total_visitors": len(known_visitors),
+        "message": "Online statistika saytga kirgan tashrifchilar heartbeat signali asosida hisoblandi.",
     }
 
 
 @app.post("/api/auth/online", response_model=OnlineHeartbeatResponse)
 def update_online_status(payload: OnlineHeartbeatRequest):
+    visitor_id = normalize_visitor_id(payload.visitor_id)
     contact = normalize_contact(payload.contact)
+    saved_contact = find_any_user_contact(contact) if contact else ""
 
-    saved_contact = find_any_user_contact(contact)
+    if visitor_id:
+        mark_visitor_online(visitor_id)
 
-    if not contact or not saved_contact:
+    if saved_contact:
+        mark_user_online(saved_contact)
+
+    if not visitor_id and not saved_contact:
         return {
-            "status": "not_registered",
+            "status": "missing_visitor",
             "online_users": count_online_users(),
-            "message": "Online holat uchun ro'yxatdan o'tgan foydalanuvchi topilmadi.",
+            "total_visitors": len(known_visitors),
+            "message": "Online holat uchun visitor_id yoki ro'yxatdan o'tgan foydalanuvchi contact qiymati kerak.",
         }
-
-    mark_user_online(saved_contact)
 
     return {
         "status": "online",
         "online_users": count_online_users(),
-        "message": "Foydalanuvchi online holatda.",
+        "total_visitors": len(known_visitors),
+        "message": "Tashrifchi online holatda.",
     }
 
 
