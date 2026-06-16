@@ -37,12 +37,23 @@ function getVisitorId() {
   return newVisitorId;
 }
 
+function shouldTrackVisit() {
+  const storageKey = "geoai_visit_tracked";
+
+  if (window.sessionStorage.getItem(storageKey))
+    return false;
+
+  window.sessionStorage.setItem(storageKey, "1");
+  return true;
+}
+
 function App() {
   const { darkMode } =
     useContext(ThemeContext);
 
   useEffect(() => {
     let isMounted = true;
+    let firstHeartbeat = true;
 
     async function sendHeartbeat() {
       try {
@@ -53,10 +64,21 @@ function App() {
         const user =
           savedUser ? JSON.parse(savedUser) : null;
 
-        await sendOnlineHeartbeat({
-          contact: user?.contact || null,
-          visitorId
-        });
+        const stats =
+          await sendOnlineHeartbeat({
+            contact: user?.contact || null,
+            visitorId,
+            trackVisit: firstHeartbeat && shouldTrackVisit()
+          });
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "geoai-stats-updated",
+            { detail: stats }
+          )
+        );
+
+        firstHeartbeat = false;
       } catch (error) {
         if (isMounted)
           console.error("Online holat yuborilmadi:", error);

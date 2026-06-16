@@ -144,6 +144,7 @@ class AuthStatsResponse(BaseModel):
 class OnlineHeartbeatRequest(BaseModel):
     contact: str | None = Field(default=None, min_length=5, max_length=120)
     visitor_id: str | None = Field(default=None, min_length=8, max_length=120)
+    track_visit: bool = False
 
 
 class OnlineHeartbeatResponse(BaseModel):
@@ -220,11 +221,13 @@ online_users: set[str] = set()
 online_sessions: dict[str, datetime] = {}
 visitor_sessions: dict[str, datetime] = {}
 known_visitors: set[str] = set()
+total_visit_count = 0
 sms_events: list[dict] = []
 email_events: list[dict] = []
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 USERS_FILE = DATA_DIR / "users.json"
+VISITS_FILE = DATA_DIR / "visits.json"
 
 
 def load_env_file():
@@ -303,6 +306,37 @@ def load_users():
         )
     except (json.JSONDecodeError, OSError):
         registered_users.clear()
+
+
+def save_visits():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    VISITS_FILE.write_text(
+        json.dumps({
+            "total_visit_count": total_visit_count,
+            "updated_at": datetime.utcnow().isoformat(),
+        }, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def load_visits():
+    global total_visit_count
+
+    if not VISITS_FILE.exists():
+        return
+
+    try:
+        data = json.loads(VISITS_FILE.read_text(encoding="utf-8"))
+        total_visit_count = max(0, int(data.get("total_visit_count", 0)))
+    except (ValueError, TypeError, json.JSONDecodeError, OSError):
+        total_visit_count = 0
+
+
+def record_site_visit():
+    global total_visit_count
+
+    total_visit_count += 1
+    save_visits()
 
 
 def public_user(contact: str, user: dict):
@@ -974,6 +1008,7 @@ app.add_middleware(
 )
 
 load_users()
+load_visits()
 
 
 @app.get("/")
@@ -1531,8 +1566,8 @@ def get_auth_stats():
     return {
         "registered_users": len(registered_users),
         "online_users": count_online_users(),
-        "total_visitors": len(known_visitors),
-        "message": "Online statistika saytga kirgan tashrifchilar heartbeat signali asosida hisoblandi.",
+        "total_visitors": total_visit_count,
+        "message": "Jami tashriflar sayt ochilganda yoziladi, online son esa heartbeat asosida hisoblanadi.",
     }
 
 
@@ -1545,6 +1580,9 @@ def update_online_status(payload: OnlineHeartbeatRequest):
     if visitor_id:
         mark_visitor_online(visitor_id)
 
+    if payload.track_visit:
+        record_site_visit()
+
     if saved_contact:
         mark_user_online(saved_contact)
 
@@ -1552,14 +1590,14 @@ def update_online_status(payload: OnlineHeartbeatRequest):
         return {
             "status": "missing_visitor",
             "online_users": count_online_users(),
-            "total_visitors": len(known_visitors),
+            "total_visitors": total_visit_count,
             "message": "Online holat uchun visitor_id yoki ro'yxatdan o'tgan foydalanuvchi contact qiymati kerak.",
         }
 
     return {
         "status": "online",
         "online_users": count_online_users(),
-        "total_visitors": len(known_visitors),
+        "total_visitors": total_visit_count,
         "message": "Tashrifchi online holatda.",
     }
 

@@ -43,9 +43,27 @@ function Header() {
       20 * 1000
     );
 
+    function updateStatsFromHeartbeat(event) {
+      const data = event.detail || {};
+
+      setStats({
+        totalVisitors: data.total_visitors ?? 0,
+        onlineUsers: data.online_users ?? 0
+      });
+    }
+
+    window.addEventListener(
+      "geoai-stats-updated",
+      updateStatsFromHeartbeat
+    );
+
     return () => {
       isMounted = false;
       clearInterval(timer);
+      window.removeEventListener(
+        "geoai-stats-updated",
+        updateStatsFromHeartbeat
+      );
     };
   }, []);
 
@@ -60,7 +78,7 @@ function Header() {
           <span className="header-stat">
             <Users size={16} />
             <strong>{stats.totalVisitors}</strong>
-            <small>tashrifchi</small>
+            <small>tashrif</small>
           </span>
 
           <span className="header-stat online">

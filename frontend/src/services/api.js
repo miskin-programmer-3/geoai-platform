@@ -266,13 +266,15 @@ export async function getAuthStats() {
 
 export async function sendOnlineHeartbeat({
   contact,
-  visitorId
+  visitorId,
+  trackVisit = false
 }) {
   const response = await API.post(
     "/api/auth/online",
     {
       contact: contact || null,
-      visitor_id: visitorId || null
+      visitor_id: visitorId || null,
+      track_visit: trackVisit
     }
   );
 
