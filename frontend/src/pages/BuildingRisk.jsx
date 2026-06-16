@@ -5,6 +5,7 @@ import {
   Building2,
   CheckCircle2,
   ClipboardList,
+  FileDown,
   Layers,
   MapPin,
   Sparkles,
@@ -71,6 +72,335 @@ function getBuildingName(building) {
     building.tags?.["addr:housenumber"] ||
     `Bino ${building.id}`
   );
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function listToHtml(items, fallback) {
+  if (!items?.length)
+    return `<li>${escapeHtml(fallback)}</li>`;
+
+  return items
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
+    .join("");
+}
+
+function buildRiskReportHtml(result, tone) {
+  const today =
+    new Date().toLocaleDateString("uz-UZ");
+
+  const scoreBreakdown =
+    result.score_breakdown?.length
+      ? result.score_breakdown
+        .map((item) => `
+          <tr>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.reason)}</td>
+            <td class="points">+${escapeHtml(item.points)}</td>
+          </tr>
+        `)
+        .join("")
+      : `
+          <tr>
+            <td colspan="3">Ball taqsimoti mavjud emas.</td>
+          </tr>
+        `;
+
+  const seismic =
+    result.estimated_seismic_resistance
+      ? `
+          <section>
+            <h2>Taxminiy zilzilaga bardoshlilik</h2>
+            <div class="seismic-box ${tone}">
+              <div class="ball">
+                ${escapeHtml(result.estimated_seismic_resistance.ball)}
+                <span>ball</span>
+              </div>
+              <div>
+                <strong>${escapeHtml(result.estimated_seismic_resistance.label)}</strong>
+                <p>${escapeHtml(result.estimated_seismic_resistance.disclaimer)}</p>
+              </div>
+            </div>
+            <ul>
+              ${listToHtml(
+                result.estimated_seismic_resistance.basis,
+                "Bardoshlilik uchun qo'shimcha asoslar mavjud emas."
+              )}
+            </ul>
+          </section>
+        `
+      : "";
+
+  return `
+    <!doctype html>
+    <html lang="uz">
+      <head>
+        <meta charset="utf-8" />
+        <title>GeoAI bino xavfi hisoboti</title>
+        <style>
+          @page {
+            size: A4;
+            margin: 18mm;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          body {
+            margin: 0;
+            color: #111827;
+            background: #ffffff;
+            font-family: "Times New Roman", serif;
+            font-size: 14pt;
+            line-height: 1.45;
+          }
+
+          .report-header {
+            padding: 18px;
+            border-radius: 8px;
+            color: #ffffff;
+            background: #0f172a;
+          }
+
+          .report-header p,
+          .report-header h1 {
+            margin: 0;
+          }
+
+          .report-header h1 {
+            margin-top: 8px;
+            font-size: 24pt;
+          }
+
+          .meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 18px 0;
+          }
+
+          .meta div,
+          section,
+          .recommendation,
+          .seismic-box {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+          }
+
+          .meta div {
+            padding: 12px;
+            background: #f8fafc;
+          }
+
+          .meta span {
+            display: block;
+            color: #64748b;
+            font-size: 11pt;
+          }
+
+          .meta strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 17pt;
+          }
+
+          section {
+            margin-top: 14px;
+            padding: 14px;
+            break-inside: avoid;
+          }
+
+          h2 {
+            margin: 0 0 10px;
+            font-size: 17pt;
+          }
+
+          p {
+            margin: 0 0 8px;
+          }
+
+          .recommendation {
+            margin-top: 14px;
+            padding: 14px;
+            font-weight: 700;
+          }
+
+          .low {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #14532d;
+          }
+
+          .medium {
+            background: #fef9c3;
+            border-color: #fde047;
+            color: #713f12;
+          }
+
+          .high {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #7f1d1d;
+          }
+
+          .seismic-box {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 14px;
+            align-items: center;
+            padding: 12px;
+          }
+
+          .ball {
+            display: grid;
+            place-items: center;
+            min-height: 84px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.56);
+            font-size: 28pt;
+            font-weight: 900;
+          }
+
+          .ball span {
+            font-size: 11pt;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+
+          th,
+          td {
+            padding: 9px;
+            border: 1px solid #d1d5db;
+            vertical-align: top;
+          }
+
+          th {
+            background: #f1f5f9;
+            text-align: left;
+          }
+
+          .points {
+            width: 70px;
+            text-align: center;
+            font-weight: 900;
+          }
+
+          ul {
+            margin: 0;
+            padding-left: 22px;
+          }
+
+          li {
+            margin-bottom: 6px;
+          }
+
+          .footer {
+            margin-top: 18px;
+            color: #64748b;
+            font-size: 11pt;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="report-header">
+          <p>GeoAI Platformasi</p>
+          <h1>Bino xavfini baholash hisoboti</h1>
+        </div>
+
+        <div class="meta">
+          <div>
+            <span>Sana</span>
+            <strong>${escapeHtml(today)}</strong>
+          </div>
+          <div>
+            <span>Xavf darajasi</span>
+            <strong>${escapeHtml(result.level)}</strong>
+          </div>
+          <div>
+            <span>Umumiy ball</span>
+            <strong>${escapeHtml(result.score)}/100</strong>
+          </div>
+        </div>
+
+        <section>
+          <h2>Umumiy xulosa</h2>
+          <p><strong>Ishonchlilik:</strong> ${escapeHtml(result.confidence)}</p>
+          <p>${escapeHtml(result.summary)}</p>
+        </section>
+
+        <div class="recommendation ${tone}">
+          ${escapeHtml(result.recommendation)}
+        </div>
+
+        ${seismic}
+
+        <section>
+          <h2>Ball nimaga asoslandi?</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Omil</th>
+                <th>Izoh</th>
+                <th>Ball</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${scoreBreakdown}
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Asosiy omillar</h2>
+          <ul>
+            ${listToHtml(result.factors, "Qo'shimcha xavf omili aniqlanmadi.")}
+          </ul>
+        </section>
+
+        <section>
+          <h2>Metodologiya</h2>
+          <ul>
+            ${listToHtml(result.methodology, "Metodologiya ma'lumoti mavjud emas.")}
+          </ul>
+        </section>
+
+        <p class="footer">
+          Ushbu hisobot dastlabki algoritmik tahlil natijasi hisoblanadi. Yakuniy xulosa uchun mutaxassis ko'rigi, loyiha hujjatlari va konstruktiv tekshiruv talab etiladi.
+        </p>
+      </body>
+    </html>
+  `;
+}
+
+function downloadRiskPdf(result) {
+  const tone = getRiskTone(result);
+  const reportWindow =
+    window.open("", "_blank");
+
+  if (!reportWindow) {
+    alert("PDF oynasini ochish uchun brauzer popup ruxsatini yoqing.");
+    return;
+  }
+
+  reportWindow.document.open();
+  reportWindow.document.write(buildRiskReportHtml(result, tone));
+  reportWindow.document.close();
+  reportWindow.focus();
+
+  window.setTimeout(() => {
+    reportWindow.print();
+  }, 250);
 }
 
 function BuildingRisk() {
@@ -411,13 +741,25 @@ function RiskModal({ result, onClose }) {
             <h2>{result.level}</h2>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Modalni yopish"
-          >
-            <X size={22} />
-          </button>
+          <div className="risk-modal-actions">
+            <button
+              type="button"
+              onClick={() => downloadRiskPdf(result)}
+              aria-label="PDF yuklab olish"
+              title="PDF yuklab olish"
+            >
+              <FileDown size={21} />
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Modalni yopish"
+              title="Modalni yopish"
+            >
+              <X size={22} />
+            </button>
+          </div>
         </div>
 
         <div className="risk-score-row">

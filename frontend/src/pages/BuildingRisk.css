@@ -220,13 +220,25 @@
   margin-top: 5px;
 }
 
-.risk-modal-header button {
+.risk-modal-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.risk-modal-actions button {
   border: 0;
   border-radius: 8px;
   padding: 8px;
   background: rgba(255, 255, 255, 0.18);
   color: inherit;
   cursor: pointer;
+  line-height: 0;
+}
+
+.risk-modal-actions button:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .risk-score-row {
