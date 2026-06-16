@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import './leafletFix.js'
 
 import { ThemeProvider } from "./context/ThemeContext";
 
