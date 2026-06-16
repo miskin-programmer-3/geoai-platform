@@ -154,11 +154,19 @@
 
 @media (max-width: 640px) {
   .app-header {
-    padding: 0 12px;
+    padding: 0 8px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-stats {
+    gap: 5px;
   }
 
   .header-brand .geoai-logo-text strong {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .header-brand .geoai-logo-text span {
@@ -174,17 +182,57 @@
   }
 
   .header-stat {
+    gap: 4px;
     min-height: 34px;
-    padding: 6px 8px;
+    padding: 6px 7px;
+  }
+
+  .header-stat strong {
+    font-size: 14px;
   }
 
   .header-stat small {
     display: none;
   }
+
+  .theme-toggle-track {
+    width: 58px;
+    height: 32px;
+  }
+
+  .theme-toggle-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .app-root.dark .theme-toggle-thumb {
+    transform: translateX(26px);
+  }
 }
 
 @media (max-width: 520px) {
-  .header-stats {
+  .header-brand .geoai-logo-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .header-stat svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .header-stat {
+    min-height: 30px;
+    padding: 5px 6px;
+  }
+
+  .theme-toggle {
+    padding: 4px;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-brand .geoai-logo-text {
     display: none;
   }
 }
